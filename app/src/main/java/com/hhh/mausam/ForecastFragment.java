@@ -58,7 +58,10 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                Toast.makeText(getContext(), "Click to Refresh.", Toast.LENGTH_SHORT).show();
+                new FetchWeatherTask().execute();
+                return true;
+            case R.id.action_settings:
+                Toast.makeText(getContext(), "Click to Settings.", Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
