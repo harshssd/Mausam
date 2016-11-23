@@ -14,12 +14,12 @@ import java.net.URL;
 /**
  * Created by Harsha on 11/13/16.
  */
-public class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
+public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(String... params) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -42,11 +42,11 @@ public class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
             Uri forecastURI = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                    .appendQueryParameter(QUERY_PARAM, "98121")  //TODO: Get the Zip Code as a paramater to Async Task.
+                    .appendQueryParameter(QUERY_PARAM, params[0])
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numOfDays))
-                    .appendQueryParameter("appid", "<APP_ID>") //TODO: Move this to properties file.
+                    .appendQueryParameter("appid", "<APP_ID>")
                     .build();
             URL forecastUrl = new URL(forecastURI.toString());
             Log.v(LOG_TAG, forecastUrl.toString());
