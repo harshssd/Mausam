@@ -16,15 +16,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Harsha on 11/13/16.
  */
 public class ForecastFragment extends Fragment {
 
-    String[] forecastList = {"Today - Sunny - 88/63", "Wednesday - Sunny - 76/60",
-            "Thursday - Cloudy - 82/65", "Friday - Rainy - 85/66", "Saturday - Foggy - 84/66",
-            "Sunday - Rainy - 88/68", "Monday - Sunny - 85/66"};
+    String[] forecastList;
 
     public ForecastFragment() {
     }
@@ -35,6 +34,13 @@ public class ForecastFragment extends Fragment {
         // This statement is required in order to indicate that the fragment needs to call its
         // lifecycle methods to handle the menu options.
         setHasOptionsMenu(true);
+        FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
+        try {
+            forecastList = fetchWeatherTask.execute("98121").get();
+        } catch (InterruptedException | ExecutionException e) {
+            forecastList = null;
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -58,7 +64,7 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                new FetchWeatherTask().execute("98121");
+                Toast.makeText(getContext(), "Click on Refresh.", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_settings:
                 Toast.makeText(getContext(), "Click to Settings.", Toast.LENGTH_SHORT).show();

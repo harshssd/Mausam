@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,12 +16,13 @@ import java.net.URL;
 /**
  * Created by Harsha on 11/13/16.
  */
-public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
+public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected String[] doInBackground(String... params) {
+
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -46,10 +49,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numOfDays))
-                    .appendQueryParameter("appid", "<APP_ID>")
+                    .appendQueryParameter("appid", "e76281e097300c5d8f7a4295ed6afdaf")
                     .build();
             URL forecastUrl = new URL(forecastURI.toString());
-            Log.v(LOG_TAG, forecastUrl.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) forecastUrl.openConnection();
@@ -78,13 +80,13 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
             forecastJsonStr = buffer.toString();
-            Log.v(LOG_TAG, forecastJsonStr);
+//            Log.v(LOG_TAG, forecastJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             return null;
-        } finally{
+        } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -96,6 +98,15 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 }
             }
         }
-        return null;
+
+        try {
+            WeatherDataParser weatherDataParser = new WeatherDataParser();
+            return weatherDataParser.getWeatherDataFromJson(forecastJsonStr, 7);
+        } catch (JSONException e) {
+            // If there is any error parsing the JSON.
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.hhh.mausam;
 
 import android.text.format.Time;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,11 +10,9 @@ import java.text.SimpleDateFormat;
 
 /**
  * Created by Harsha on 11/22/16.
- * Taken from Udacity's Gist: https://gist.github.com/udacityandroid/4ee49df1694da9129af9#file-forecastfragment-java-L25
+ * Reference: Udacity's Gist - https://gist.github.com/udacityandroid/4ee49df1694da9129af9#file-forecastfragment-java-L25
  */
 public class WeatherDataParser {
-
-    private final String LOG_TAG = WeatherDataParser.class.getSimpleName();
 
     /**
      * Take the String representing the complete forecast in JSON Format and
@@ -86,12 +83,7 @@ public class WeatherDataParser {
             highAndLow = formatHighLows(high, low);
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
-
-        for (String s : resultStrs) {
-            Log.v(LOG_TAG, "Forecast entry: " + s);
-        }
         return resultStrs;
-
     }
 
     /**
@@ -101,7 +93,7 @@ public class WeatherDataParser {
     private String getReadableDateString(long time){
         // Because the API returns a unix timestamp (measured in seconds),
         // it must be converted to milliseconds in order to be converted to valid date.
-        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE, MMM dd");
         return shortenedDateFormat.format(time);
     }
 
