@@ -1,5 +1,6 @@
 package com.hhh.mausam;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -56,10 +57,18 @@ public class ForecastFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), forecastAdapter.getItem(position), Toast.LENGTH_SHORT).show();
+                displayForecastDetail(forecastAdapter.getItem(position));
             }
         });
         return rootView;
+    }
+
+    /**
+     * This method is invoked when there is a request to display the forecast detail.
+     */
+    public void displayForecastDetail(String forecastDetail) {
+        Intent detailIntent = new Intent(getActivity(), ForecastDetailActivity.class);
+        startActivity(detailIntent);
     }
 
     @Override
