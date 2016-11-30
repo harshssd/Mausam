@@ -68,6 +68,7 @@ public class ForecastFragment extends Fragment {
      */
     public void displayForecastDetail(String forecastDetail) {
         Intent detailIntent = new Intent(getActivity(), ForecastDetailActivity.class);
+        detailIntent.putExtra(Intent.EXTRA_TEXT, forecastDetail);
         startActivity(detailIntent);
     }
 
