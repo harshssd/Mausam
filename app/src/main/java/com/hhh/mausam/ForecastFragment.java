@@ -1,7 +1,9 @@
 package com.hhh.mausam;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -38,7 +40,10 @@ public class ForecastFragment extends Fragment {
         setHasOptionsMenu(true);
         FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
         try {
-            forecastList = fetchWeatherTask.execute("98121").get();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String locationPref = sharedPref.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+            forecastList = fetchWeatherTask.execute(locationPref).get();
         } catch (InterruptedException | ExecutionException e) {
             forecastList = null;
             e.printStackTrace();
