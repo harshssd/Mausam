@@ -84,7 +84,7 @@ public class ForecastFragment extends Fragment {
                 Toast.makeText(getContext(), "Click on Refresh.", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_settings:
-                Toast.makeText(getContext(), "Click to Settings.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

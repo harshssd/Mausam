@@ -7,7 +7,6 @@
     tools:context="com.hhh.mausam.ForecastDetailActivity$PlaceholderFragment">
 
     <TextView android:id="@+id/forecast_detail"
-        android:text="Forecast Details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
