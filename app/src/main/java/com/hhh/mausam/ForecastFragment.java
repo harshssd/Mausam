@@ -2,10 +2,12 @@ package com.hhh.mausam;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +28,8 @@ public class ForecastFragment extends Fragment {
 
     private String[] forecastList;
     private ArrayAdapter<String> forecastAdapter;
+
+    private static String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     public ForecastFragment() {
     }
@@ -69,9 +73,11 @@ public class ForecastFragment extends Fragment {
             String unitType = sharedPref.getString(getString(R.string.pref_units_key),
                     getString(R.string.pref_units_metric));
             forecastList = fetchWeatherTask.execute(locationPref, unitType).get();
-            forecastAdapter.clear();
-            for(String forecast: forecastList) {
-                forecastAdapter.add(forecast);
+            if(forecastList != null) {
+                forecastAdapter.clear();
+                for(String forecast: forecastList) {
+                    forecastAdapter.add(forecast);
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             forecastList = null;
@@ -105,7 +111,29 @@ public class ForecastFragment extends Fragment {
             case R.id.action_settings:
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
                 return true;
+            case R.id.action_map:
+                openPreferredLocationInMap();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocationInMap() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = sharedPrefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        //Using the Uri scheme for showing the location by opening a map intent. Same
+        //intent can be used to show the contacts, open email or invoking the dialer.
+        //https://developer.android.com/reference/android/content/Intent.html#ACTION_VIEW
+        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                .appendQueryParameter("q", location).build();
+        Intent geoLocationIntent = new Intent(Intent.ACTION_VIEW);
+        geoLocationIntent.setData(geoLocation);
+        if(geoLocationIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(geoLocationIntent);
+        } else {
+            Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
+        }
     }
 }
