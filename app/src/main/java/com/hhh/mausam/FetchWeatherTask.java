@@ -101,7 +101,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         try {
             WeatherDataParser weatherDataParser = new WeatherDataParser();
-            return weatherDataParser.getWeatherDataFromJson(forecastJsonStr, 7);
+            return weatherDataParser.getWeatherDataFromJson(forecastJsonStr, 7, params[1]);
         } catch (JSONException e) {
             // If there is any error parsing the JSON.
             Log.e(LOG_TAG, e.getMessage(), e);

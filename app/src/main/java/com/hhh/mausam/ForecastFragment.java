@@ -43,7 +43,14 @@ public class ForecastFragment extends Fragment {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String locationPref = sharedPref.getString(getString(R.string.pref_location_key),
                     getString(R.string.pref_location_default));
-            forecastList = fetchWeatherTask.execute(locationPref).get();
+            // Data is fetched in Celsius by default.
+            // If user prefers to see in Fahrenheit, convert the values here.
+            // We do this rather than fetching in Fahrenheit so that the user can
+            // change this option without us having to re-fetch the data once
+            // we start storing the values in a database.
+            String unitType = sharedPref.getString(getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_metric));
+            forecastList = fetchWeatherTask.execute(locationPref, unitType).get();
         } catch (InterruptedException | ExecutionException e) {
             forecastList = null;
             e.printStackTrace();
