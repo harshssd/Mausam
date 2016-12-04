@@ -18,8 +18,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -27,7 +25,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class ForecastFragment extends Fragment {
 
-    String[] forecastList;
+    private String[] forecastList;
+    private ArrayAdapter<String> forecastAdapter;
 
     public ForecastFragment() {
     }
@@ -38,6 +37,26 @@ public class ForecastFragment extends Fragment {
         // This statement is required in order to indicate that the fragment needs to call its
         // lifecycle methods to handle the menu options.
         setHasOptionsMenu(true);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        forecastAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast,
+                R.id.list_item_forecast_textview, new ArrayList<String>());
+        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        listView.setAdapter(forecastAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                displayForecastDetail(forecastAdapter.getItem(position));
+            }
+        });
+        return rootView;
+    }
+
+    private void updateWeather() {
         FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -51,28 +70,20 @@ public class ForecastFragment extends Fragment {
             String unitType = sharedPref.getString(getString(R.string.pref_units_key),
                     getString(R.string.pref_units_metric));
             forecastList = fetchWeatherTask.execute(locationPref, unitType).get();
+            forecastAdapter.clear();
+            for(String forecast: forecastList) {
+                forecastAdapter.add(forecast);
+            }
         } catch (InterruptedException | ExecutionException e) {
             forecastList = null;
             e.printStackTrace();
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        final List<String> forecastItems = new ArrayList<>(Arrays.asList(forecastList));
-        final ArrayAdapter<String> forecastAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast,
-                R.id.list_item_forecast_textview, forecastItems);
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(forecastAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                displayForecastDetail(forecastAdapter.getItem(position));
-            }
-        });
-        return rootView;
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     /**
