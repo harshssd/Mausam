@@ -36,7 +36,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             // Possible parameters are available at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
             String format = "json";
-            String units = "metric";
+            String units = "metric"; // Always fetch it from the server using metric unit.
             int numOfDays = 7;
 
             final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
@@ -44,12 +44,13 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
+            final String APP_ID = "appid";
             Uri forecastURI = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, params[0])
                     .appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numOfDays))
-                    .appendQueryParameter("appid", "e76281e097300c5d8f7a4295ed6afdaf")
+                    .appendQueryParameter(APP_ID, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
                     .build();
             URL forecastUrl = new URL(forecastURI.toString());
 
